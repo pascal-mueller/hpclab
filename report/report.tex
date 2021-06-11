@@ -150,30 +150,13 @@ We end up with the following discretized problem:
           &g^h(x, y) &&= 0 &&\text{  on  } \partial \Omega
 \end{alignat}
 
-
-DELETE
-From §1.2.1 we see $h=\frac{1}{N-1}$
-
-We'll now rewrite (12) into matrix form: $\Delta g(x,y) = A \mathbf{\mu}$
-
-whereas
-
-\begin{equation}
-A = 
-\begin{pmatrix}
-   4 & -1 &  0 & \dots & 0 \\
-  -1 &  4 & -1 & \dots & 0 \\    
-   0 & -1 &  4 & -1 & 0 \\
-   \vdots & & \ddots & & \\
-   \vdots & & -1 &  4 & -1 \\
-   0 & \dots &  0 & -1 & 4
-\end{pmatrix}
-\in \mathbb R^{(N-1) \times (N-1)}
-\end{equation}
-
-\begin{equation}
-  \mathbf{\mu} = (g_{0,0},\dots,g_{0,N-1},\dots,g_{N-1,0},\dots,g_{N-1, N-1})^T
-\end{equation}
+\subsection{Implementation}
+For the implementation, we used PETSc. The implementation used in this report can be
+found in the file \hl{poisson.c}. It's rather straight forward: We compute the
+sparse Matrix, we compute the right hand side and use a Krylov Space Solver
+to solve the arising linear system (14). We then output the solution and use
+the python script to plot it.14). We then output the solution and use
+the python script to plot it.
 
 \subsection{Refs}
 [1]: https://en.wikipedia.org/wiki/Finite\_difference
@@ -187,10 +170,10 @@ A =
 		Problem & \multicolumn{1}{c||}{$N$} &  \multicolumn{4}{c}{Number of Euler cores} \\
 		&       & \multicolumn{1}{c|}{1} & \multicolumn{1}{c|}{8} & \multicolumn{1}{c|}{16} & \multicolumn{1}{c}{32} \\
 		\hline\hline
-		{ Poisson} & $500^2$  &    \phantom{222222}        &    \phantom{222222}      & \phantom{222222}         &      \phantom{222222} \\
-		{ Poisson} & $1000^2$ &            &          &          &       \\
-		{ Poisson} & $2000^2$ &            &          &          &       \\
-		{ Poisson} & $3000^2$ &            &          &          &       \\\hline \hline
+		{ Poisson} & $500^2$  & 18.741 s   \phantom{222222}       & 2.3644 s   \phantom{222222}      & 1.6902 s \phantom{222222}         &   0.5808 s    \phantom{222222} \\
+		{ Poisson} & $1000^2$ & 281.5761 s           &  22.8054 s        & 25.9396 s         & 16.2759 s      \\
+		{ Poisson} & $2000^2$ & 1672.8654 s          &  227.9636 s        & 242.0646 s         & 132.6214 s      \\
+		{ Poisson} & $3000^2$ & 3913.1136 s           & 568.8824 s        & 523.6924 s         & 323.2356 s      \\\hline \hline
 	\end{tabular}
 	
 	\label{tab:PDEparallel1}
@@ -238,7 +221,15 @@ rather small matrix size.
   \caption{Strong scaling experiment for matrix multiplication.}                 
 \end{figure}
 
+In Figure 2 we can see the plottet solution. I didn't include plots for all
+the solutions but the script supports it. The difference one can see is that
+the surface get's smoother.
 
+\begin{figure}[H] 
+  \centering                                                 
+  \includegraphics[width=1\linewidth]{images/solution.png}                     
+  \caption{Strong scaling experiment for matrix multiplication.}                 
+\end{figure}
 
 % -------------------------------------------------------------------------- %
 % -------------------------------------------------------------------------- %
@@ -248,6 +239,11 @@ rather small matrix size.
 
 
 \section{Jupyter Notebook - Parallel PDE-Constrained Optimization [40 points]}
+We spent a lot of time on this problem but sadly we didn't have time to
+figure out how to properly built the hessian matrix. Thus we could not do any
+measurement. The code can be found in the folder "problem 4". Again, I didn't
+use a Notebook.
+
 
 \subsection{Hessian}
 Lagragian: $L^h(\mathbf{y}, \mathbf{u}) = \sigma F^h(\mathbf{y}, \mathbf{u})
