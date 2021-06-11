@@ -1,0 +1,15 @@
+prefix=/cluster/home/<username>/lecture/Project7/Ipopt
+#prefix=${pcfiledir}/../..
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include/coin-or
+
+Name: IPOPT
+Description: Interior Point Optimizer
+URL: https://github.com/coin-or/Ipopt
+Version: 3.13.3
+Cflags: -I${includedir}
+Libs: -L${libdir} -lipopt
+Requires.private: 
+#Libs: -L${libdir} -lipopt  -lpardiso600-GNU720-X86-64 -lgfortran -lquadmath -lmkl_core -lmkl_intel_lp64 -lmkl_sequential -lm -lm  -ldl
+#Requires: 

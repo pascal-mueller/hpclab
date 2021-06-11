@@ -1,0 +1,275 @@
+from __future__ import print_function, unicode_literals
+
+import sys
+import ipopt
+import numpy as np
+import matplotlib.pyplot as plt
+
+class example(object):
+    def __init__(self):
+        pass
+
+    # Implemented (19)
+    def objective(self, x):
+        #
+        # The callback for calculating the objective
+        #
+        
+        N = int(len(x)/2 - 1)
+        h = 1.0/(N+1)
+        F = 0.0
+        
+        # INNER
+        for i in range(1,N+1): # rows
+            for j in range(1,N+1): # cols
+                x1 = h*i 
+                x2 = h*j 
+                y_d = 3.0 + 5.0 * x1 * (x1-1.0) * x2 * (x2-1.0)
+                y_ij = x[(N+1)*i+j]
+                
+                F +=  (y_ij - y_d)**2
+
+        # BOUNDARY
+        # I think we have vanishing dirichlet BC 
+        for i in [0,N+2]: # rows
+            for j in [0,N+2]: # cols
+                x1 = h*i 
+                x2 = h*j  
+                u_ij = 3.0 + 5.0 * x1*(x1-1.0) * x2*(x2-1.0)
+
+                F += 0.01 * u_ij # u_ij = 0.0 on boundary, alpha = 0.01
+        
+        return 0.5*h*F
+        #return x[0] * x[3] * np.sum(x[0:3]) + x[2]
+
+    # 2*d(F)/dy = h*h*sum{ 2*(y_ij-y_ij^d)
+    def gradient(self, x):
+        #
+        # The callback for calculating the gradient
+        #
+        
+        
+
+        """return np.array([
+                    x[0] * x[3] + x[3] * np.sum(x[0:3]),
+                    x[0] * x[3],
+                    x[0] * x[3] + 1.0,
+                    x[0] * np.sum(x[0:3])
+                    ])"""
+
+    def constraints(self, x):
+        #
+        # The callback for calculating the constraints
+        #
+        N = int(len(x)/2 - 1)
+        h = 10.0/(N+1)
+        G = np.zeros(len(x))
+
+        # INTERIOR - We assume the origin to be in the top left corner
+        for i in range(1,N+1):
+            for j in range(1,N+1):
+                y_middle = x[(N+1)*i+j]
+                y_left  = x[(N+1)*i+j-1]
+                y_right = x[(N+1)*i+j+1]
+                y_up    = x[(N+1)*(i-1)+j]
+                y_down  = x[(N+1)*(i+1)+j]
+                h2d = -20*h*h
+                G[(N+1)*i+j] += 4*y_middle - y_down - y_up - y_right - y_left
+                - h2d
+
+        
+        # BOUNDARY: Left
+        for i in [1, N+1]:
+            for j in [1, N+1]:
+                y_middle = x[(N+1)*i+j]
+                y_right = x[(N+1)*i+j+1]
+                y_up    = x[(N+1)*(i-1)+j]
+                y_down  = x[(N+1)*(i+1)+j]
+                h2d = -20*h*h
+                
+                G[(N+1)*i+j] += 4*y_middle - y_down - y_up - y_right - h2d
+
+        # BOUNARY: right
+        for i in [1,N+1]:
+            for j in [1,N+1]:
+                y_middle = x[(N+1)*i+j]
+                y_left  = x[(N+1)*i+j-1]
+                y_up    = x[(N+1)*(i-1)+j]
+                y_down  = x[(N+1)*(i+1)+j]
+                h2d = -20*h*h
+                G[(N+1)*i+j] += 4*y_middle - y_down - y_up - y_left - h2d
+
+        # BOUNARY: up
+        for i in [1,N+1]:
+            for j in [1,N+1]:
+                y_middle = x[(N+1)*i+j]
+                y_left  = x[(N+1)*i+j-1]
+                y_right = x[(N+1)*i+j+1]
+                y_down  = x[(N+1)*(i+1)+j]
+                h2d = -20*h*h
+                G[(N+1)*i+j] += 4*y_middle - y_down - y_right - y_left - h2d
+
+        # BOUNARY: down
+        for i in [1,N+1]:
+            for j in [1,N+1]:
+                y_middle = x[(N+1)*i+j]
+                y_left  = x[(N+1)*i+j-1]
+                y_right = x[(N+1)*i+j+1]
+                y_up    = x[(N+1)*(i-1)+j]
+                h2d = -20*h*h
+                G[(N+1)*i+j] += 4*y_middle - y_up- y_right - y_left - h2d
+
+
+        # CORNER: (0,0) UPPER LEFT
+        y_middle = x[0]
+        y_right = x[1]
+        y_down  = x[(N+1)]
+        h2d = -20*h*h
+        G[0] += 4*y_middle - y_down - y_right - h2d
+
+        # CORNER: (0, N+1) UPPER RIGHT 
+        y_middle = x[(N+1)]
+        y_left  = x[N]
+        y_down  = x[2*(N+1)]
+        h2d = -20*h*h
+        G[(N+1)] += 4*y_middle - y_down - y_right - y_left - h2d
+        
+        # CORNER: (N+1, 0) LOWER LEFT
+        y_middle = x[(N+1)*(N+1)]
+        y_right = x[(N+1)*(N+1)+1]
+        y_up    = x[(N+1)*N]
+        h2d = -20*h*h
+        G[(N+1)*(N+1)] += 4*y_middle - y_up - y_right - h2d
+        
+        # CORNER: (N+1, N+1) LOWER RIGHT 
+        y_middle = x[(N+1)*(N+1)+(N+1)]
+        y_left  = x[(N+1)*(N+1)+N]
+        y_up    = x[(N+1)*N+(N+1)]
+        h2d = -20*h*h
+        G[(N+1)*(N+1) + (N+1)] += 4*y_middle -y_up - y_left - h2d
+
+        return G
+        #return np.array((np.prod(x), np.dot(x, x)))
+
+    def jacobian(self, x):
+        #
+        # The callback for calculating the Jacobian
+        #
+        # TODO: Should this involve the border?
+        return -20.0*np.ones(len(x))
+
+        #return np.concatenate((np.prod(x) / x, 2*x))
+
+    def hessianstructure(self):
+        #
+        # The structure of the Hessian
+        # Note:
+        # The default hessian structure is of a lower triangular matrix. Therefore
+        # this function is redundant. I include it as an example for structure
+        # callback.
+        #
+
+        return np.nonzero(np.tril(np.ones((4, 4))))
+
+    def hessian(self, x, lagrange, obj_factor):
+        #
+        # The callback for calculating the Hessian
+        #
+        H = obj_factor*np.array((
+                (2*x[3], 0, 0, 0),
+                (x[3],   0, 0, 0),
+                (x[3],   0, 0, 0),
+                (2*x[0]+x[1]+x[2], x[0], x[0], 0)))
+
+        H += lagrange[0]*np.array((
+                (0, 0, 0, 0),
+                (x[2]*x[3], 0, 0, 0),
+                (x[1]*x[3], x[0]*x[3], 0, 0),
+                (x[1]*x[2], x[0]*x[2], x[0]*x[1], 0)))
+
+        H += lagrange[1]*2*np.eye(4)
+
+        row, col = self.hessianstructure()
+
+        return H[row, col]
+
+    def intermediate(
+            self,
+            alg_mod,
+            iter_count,
+            obj_value,
+            inf_pr,
+            inf_du,
+            mu,
+            d_norm,
+            regularization_size,
+            alpha_du,
+            alpha_pr,
+            ls_trials
+            ):
+
+        #
+        # Example for the use of the intermediate callback.
+        #
+        print("Objective value at iteration #%d is - %g" % (iter_count, obj_value))
+
+
+#
+# Define the problem
+#
+
+# Discretization parameter
+N = 3
+h = 1.0/(N+1)
+
+print(f"Starting with N={N}, h={h}")
+
+# Helper vars
+ones = np.ones( (N+2)*(N+2) )
+zeros = np.zeros( (N+2)*(N+2) )
+no_boundary = ones*1e-20
+
+# Initial guess
+# x0 = [1.0, 5.0, 5.0, 1.0]
+x0 = [ones, ones] # [y(x),u(x)]
+
+#
+# Lower and upper bound on variables
+#
+# y(x) <= 3.5 on Omega
+# 0 <= u(x) <= 10
+lb = [no_boundary , no_boundary] 
+ub = [10.0*ones, no_boundary]
+
+#
+# Lower and upper bound on constraint G^h(y)
+#
+cl = [no_boundary, no_boundary]
+cu = [no_boundary, no_boundary]
+
+nlp = ipopt.problem(
+            n=len(x0),
+            m=len(cl),
+            problem_obj=example(),
+            lb=lb,
+            ub=ub,
+            cl=cl,
+            cu=cu
+            )
+
+#
+# Set solver options
+#
+nlp.addOption('tol', 1e-7)
+
+#
+# Solve the problem
+#
+x, info = nlp.solve(x0)
+
+print("Solution of the primal variables: x=%s\n" % repr(x))
+print("Solution of the dual variables: lambda=%s\n" % repr(info['mult_g']))
+print("Objective=%s\n" % repr(info['obj_val']))
+
+plt.plot(x)
+

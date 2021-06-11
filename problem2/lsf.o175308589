@@ -1,0 +1,45 @@
+Sender: LSF System <lsfadmin@eu-ms-010-42>
+Subject: Job 175308589: <mpirun ./poisson -mat_type mpiaij -n 3000> in cluster <euler> Exited
+
+Job <mpirun ./poisson -mat_type mpiaij -n 3000> was submitted from host <eu-login-32> by user <pamuelle> in cluster <euler> at Fri Jun 11 17:00:59 2021
+Job was executed on host(s) <eu-ms-010-42>, in queue <normal.4h>, as user <pamuelle> in cluster <euler> at Fri Jun 11 17:01:08 2021
+</cluster/home/pamuelle> was used as the home directory.
+</cluster/home/pamuelle/hpc_lab/hpclab_fs2021/Project7/problem2> was used as the working directory.
+Started at Fri Jun 11 17:01:08 2021
+Terminated at Fri Jun 11 17:01:25 2021
+Results reported at Fri Jun 11 17:01:25 2021
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+mpirun ./poisson -mat_type mpiaij -n 3000
+------------------------------------------------------------
+
+TERM_MEMLIMIT: job killed after reaching LSF memory usage limit.
+Exited with exit code 137.
+
+Resource usage summary:
+
+    CPU time :                                   12.09 sec.
+    Max Memory :                                 3536 MB
+    Average Memory :                             2652.00 MB
+    Total Requested Memory :                     1024.00 MB
+    Delta Memory :                               -2512.00 MB
+    Max Swap :                                   -
+    Max Processes :                              4
+    Max Threads :                                11
+    Run time :                                   19 sec.
+    Turnaround time :                            26 sec.
+
+The output (if any) follows:
+
+
+
+--------------------------------------------------------------------------
+Primary job  terminated normally, but 1 process returned
+a non-zero exit code. Per user-direction, the job has been aborted.
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+mpirun noticed that process rank 0 with PID 0 on node eu-ms-010-42 exited on signal 9 (Killed).
+--------------------------------------------------------------------------

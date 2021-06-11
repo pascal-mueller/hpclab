@@ -1,0 +1,126 @@
+Restart file 
+
+Remote IP address: 10.205.176.62
+
+Remote port: 8888
+
+Local port: 47597
+
+Jupyter token: 906f83ab5fe71f55bef30077ea99d39573c891bfe91fd195
+
+SSH tunnel: ssh pamuelle@euler -L 47597:10.205.176.62:8888 -N &
+
+URL: http://localhost:47597/?token=906f83ab5fe71f55bef30077ea99d39573c891bfe91fd195
+
+Restart file 
+
+Remote IP address: 10.205.176.33
+
+Remote port: 8888
+
+Local port: 34489
+
+Jupyter token: c42fcd422650f560ca919c5253875828eb1d432c852d4437
+
+SSH tunnel: ssh pamuelle@euler -L 34489:10.205.176.33:8888 -N &
+
+URL: http://localhost:34489/?token=c42fcd422650f560ca919c5253875828eb1d432c852d4437
+
+Restart file 
+
+Remote IP address: 10.205.176.100
+
+Remote port: 8888
+
+Local port: 53149
+
+Jupyter token: 436f2c328cc12546c47e92dae068db0f1ea84d94b15287e9
+
+SSH tunnel: ssh pamuelle@euler -L 53149:10.205.176.100:8888 -N &
+
+URL: http://localhost:53149/?token=436f2c328cc12546c47e92dae068db0f1ea84d94b15287e9
+
+Restart file 
+
+Remote IP address: 10.205.176.34
+
+Remote port: 8888
+
+Local port: 40435
+
+Jupyter token: 285f553b86547817c1ca2e4772ad3e20373babaaa4e8c738
+
+SSH tunnel: ssh pamuelle@euler -L 40435:10.205.176.34:8888 -N &
+
+URL: http://localhost:40435/?token=285f553b86547817c1ca2e4772ad3e20373babaaa4e8c738
+
+Restart file 
+
+Remote IP address: 10.205.176.145
+
+Remote port: 8888
+
+Local port: 50313
+
+Jupyter token: 93f75bc6d5f5d2e6e41745f3a07a47f4ec8a0126bf98d24a
+
+SSH tunnel: ssh pamuelle@euler -L 50313:10.205.176.145:8888 -N &
+
+URL: http://localhost:50313/?token=93f75bc6d5f5d2e6e41745f3a07a47f4ec8a0126bf98d24a
+
+Restart file 
+
+Remote IP address: 10.205.177.11
+
+Remote port: 8888
+
+Local port: 41235
+
+Jupyter token: d467701b96dc945f73da98c5d158a531cceae70eaec32be8
+
+SSH tunnel: ssh pamuelle@euler -L 41235:10.205.177.11:8888 -N &
+
+URL: http://localhost:41235/?token=d467701b96dc945f73da98c5d158a531cceae70eaec32be8
+
+Restart file 
+
+Remote IP address: 10.205.107.84
+
+Remote port: 8888
+
+Local port: 34227
+
+Jupyter token: b9fcd86b66f7eeb5ecc0d2d9a69655de1b9f5a74e03c3d4f
+
+SSH tunnel: ssh pamuelle@euler -L 34227:10.205.107.84:8888 -N &
+
+URL: http://localhost:34227/?token=b9fcd86b66f7eeb5ecc0d2d9a69655de1b9f5a74e03c3d4f
+
+Restart file 
+
+Remote IP address: 10.205.107.145
+
+Remote port: 8888
+
+Local port: 34527
+
+Jupyter token: e98cf89f3fdf05f4e93d7fa35e5dfd9504ea6dea17af6d36
+
+SSH tunnel: ssh pamuelle@euler -L 34527:10.205.107.145:8888 -N &
+
+URL: http://localhost:34527/?token=e98cf89f3fdf05f4e93d7fa35e5dfd9504ea6dea17af6d36
+
+Restart file 
+
+Remote IP address: 10.205.107.214
+
+Remote port: 8888
+
+Local port: 42725
+
+Jupyter token: 17c6b75d70963142a04003dee4f65743350ccd4df16700df
+
+SSH tunnel: ssh pamuelle@euler -L 42725:10.205.107.214:8888 -N &
+
+URL: http://localhost:42725/?token=17c6b75d70963142a04003dee4f65743350ccd4df16700df
+

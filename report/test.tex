@@ -1,0 +1,214 @@
+\documentclass[unicode,11pt,a4paper,oneside,numbers=endperiod,openany]{scrartcl}
+
+\usepackage{amsmath}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{soul}
+\sethlcolor{lightgray}
+\usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{matrix}
+\usepackage{amsfonts}
+
+\input{assignment.sty}
+\begin{document}
+
+
+\setassignment
+\setduedate{May 20, 2021, 12pm (midnight)}
+
+\serieheader{High-Performance Computing Lab for CSE}
+    {2021}
+    {Student: Pascal Dominic Müller}
+    {\\ \\ Discussed with: \\
+        $\bullet$ Tarzis Maurer [tamaurer] \\
+        $\bullet$ Zuzanna Herud [zherud] \\
+    }
+    {Solution for Project 6}
+    {}
+\newline
+
+\assignmentpolicy
+
+% -------------------------------------------------------------------------- %
+% -------------------------------------------------------------------------- %
+% --- Exercise 1 ----------------------------------------------------------- %
+% -------------------------------------------------------------------------- %
+% -------------------------------------------------------------------------- %
+
+\section{Scientific Mathematical HPC Software Frameworks - The Poisson Equation [35 points]}
+
+\subsection{Problem Statement: The Poisson Equation}
+
+We solve the poisson equation on the 2 dimensional unit rectangle
+$\Omega \subset \mathbb R^2=[0,1] \times [0,1]$ with vanishing dirichlet BC.
+\begin{alignat}{3}
+  -\Delta &y(x_1, x_2) &&= f(x_1, x_2) &&\text{  on  } \Omega = [0,1] \times [0,1]\\
+          &y(x_1, x_2) &&= 0 &&\text{  on  } \partial \Omega
+\end{alignat}
+
+whereas $\Delta \equiv \frac{\partial^2}{\partial x_1^2} + \frac{\partial^2}{\partial x_2^2}$
+
+\subsection{Discretization}
+
+
+\subsubsection{Theory}
+Let $g(x,y)$ be an at least twice continuous differentiable function. For the
+discretization we use a central finite difference approach [1][Project 3].
+
+The central finite difference in the direction of x (similar for y) is given by:
+
+\begin{equation}
+  \delta_h [g](x) = g(x+\frac{1}{2}h) - g(x-h)
+\end{equation}
+
+which leads to
+
+\begin{equation}
+  \frac{\partial g(x)^2}{\partial^2 x} = \dots = 
+    \frac{g(x + h) - 2g(x) + g(x - h)}{h^2}
+\end{equation}
+
+\subsubsection{LHS}
+
+Note: here $y$ denotes the seeked function, not the coordinate.
+
+We first write out the laplacian operator.
+\begin{equation}
+  -\Delta y(x_1, x_2) = \frac{\partial y(x_1, x_2)^2}{\partial x_1^2} 
+                      + \frac{\partial y(x_1, x_2)^2}{\partial x_2^2}
+\end{equation}
+
+Applying (4) to (5) for $x_1$ and $x_2$ separately, we get:
+\begin{equation}
+  \frac{\partial y(x_1, x_2)^2}{\partial x_1^2} = 
+    \frac{y(x_1 + h, x_2) - 2y(x_1, x_2) + y(x_1 - h, x_2)}{h^2}
+\end{equation}
+\begin{equation}
+  \frac{\partial y(x_1, x_2)^2}{\partial x_1^2} = 
+    \frac{y(x_1, x_2 + h) - 2y(x_1, x_2) + y(x_1, x_2 - h)}{h^2}
+\end{equation}
+
+We plug (6) and (7) into (5) and use the notations (similar for $x_2$ and $j$
+\begin{itemize}
+  \item $y(x_1, x_2) = y_{i,j}$
+  \item $y(x_1 + h, x_2) = y_{i+1, j}$
+  \item $y(x_1 - h, x_2) = y_{i-h, j}$
+\end{itemize}
+
+to end up with
+
+\begin{align}
+  -\Delta y(x_1,x_2) & \\
+                     &= \frac{y(x_1 + h, x_2) - 2y(x_1, x_2) + y(x_1 - h, x_2)}{h^2} \\
+                     &\ \ + \frac{y(x_1, x_2 + h) - 2y(x_1, x_2) + y(x_1, x_2 - h)}{h^2} \\
+                   &= \frac{1}{h^2} ( y_{i+1,j} - 2y_{i,j} + y_{i-1,j}
+                      + y_{i, j+1} - 2y_{i,j} + y_{i,j-1}) \\
+                   &= \frac{1}{h^2} ( -4_{i,j} + y_{i+1,j} + y_{i-1,j}
+                      + _{i, j+1} + y_{i,j-1} )
+\end{align}
+
+We get:
+
+\begin{equation}
+  \boxed{
+      -\Delta y(x_1,x_2) = \frac{1}{h^2} ( -4y_{i,j} + y_{i+1,j} + y_{i-1,j}
+                           + y_{i, j+1} + y_{i,j-1} )
+  }
+\end{equation}
+
+\subsubsection{RHS}
+On the RHS we have a function $f(x_1, x_2): \mathbb R^2 \to \mathbb R$.
+
+Its discretization is given by 
+
+\begin{equation}
+  \boxed{
+    f_{i,j} := f(x_1^i, x_2^j)
+  }
+\end{equation}
+
+\subsection{Discretized Problem}
+
+
+\subsection{Refs}
+[1]: https://en.wikipedia.org/wiki/Finite\_difference
+
+
+\begin{table}[h]
+	\caption{Wall-clock time (in seconds) and speed-up (in brackets) using multiple cores on Euler for solving the Poisson problem.}
+	\centering
+	
+	\begin{tabular}{l|r||r|r|r|r}\hline\hline
+		Problem & \multicolumn{1}{c||}{$N$} &  \multicolumn{4}{c}{Number of Euler cores} \\
+		&       & \multicolumn{1}{c|}{1} & \multicolumn{1}{c|}{8} & \multicolumn{1}{c|}{16} & \multicolumn{1}{c}{32} \\
+		\hline\hline
+		{ Poisson} & $500^2$  &    \phantom{222222}        &    \phantom{222222}      & \phantom{222222}         &      \phantom{222222} \\
+		{ Poisson} & $1000^2$ &            &          &          &       \\
+		{ Poisson} & $2000^2$ &            &          &          &       \\
+		{ Poisson} & $3000^2$ &            &          &          &       \\\hline \hline
+	\end{tabular}
+	
+	\label{tab:PDEparallel1}
+\end{table}
+
+
+% -------------------------------------------------------------------------- %
+% -------------------------------------------------------------------------- %
+% --- Exercise 2 ----------------------------------------------------------- %
+% -------------------------------------------------------------------------- %
+% -------------------------------------------------------------------------- %
+
+\section{Interactive Supercomputing using Jupyter Notebook  [10 points]}
+
+
+% -------------------------------------------------------------------------- %
+% -------------------------------------------------------------------------- %
+% --- Exercise 3 ----------------------------------------------------------- %
+% -------------------------------------------------------------------------- %
+% -------------------------------------------------------------------------- %
+
+
+\section{Jupyter Notebook - Parallel PDE-Constrained Optimization [40 points]}
+
+\begin{table}[h]
+  \caption{Wall-clock time (in seconds) and speed-up (in brackets) using multiple cores on Euler for solving the PDE-constrained optimization problem.}
+	\centering
+	
+	\medskip
+	
+	%\footnotesize
+	\begin{tabular}{l|r||r|r|r|r}\hline\hline
+		Problem & \multicolumn{1}{c||}{$N$} &  \multicolumn{4}{c}{Number of Euler cores} \\
+		&       & \multicolumn{1}{c|}{1} & \multicolumn{1}{c|}{8} & \multicolumn{1}{c|}{16} & \multicolumn{1}{c}{32} \\
+		\hline\hline
+		{ Inverse Poisson} & $500^2$  &    \phantom{222222}        &    \phantom{222222}      & \phantom{222222}         &      \phantom{222222} \\
+		{ Inverse  Poisson} & $1000^2$ &            &          &          &       \\
+		{ Inverse Poisson} & $2000^2$ &            &          &          &       \\
+		{ Inverse Poisson} & $3000^2$ &            &          &          &       \\\hline \hline
+	\end{tabular}
+	
+	\label{tab:PDEparallel}
+\end{table}
+
+\section{Task:  Quality of the Report [15 Points]}
+Each project will have 100 points (out of  which 15 points will be given to the general quality of the written report).
+
+
+\section*{Additional notes and submission details}
+Submit the source code files (together with your used \texttt{Makefile}) in
+an archive file (tar, zip, etc.), and summarize your results and the
+observations for all exercises by writing an extended Latex report.
+Use the Latex template provided on the webpage and upload the Latex summary
+as a PDF to \href{https://moodle-app2.let.ethz.ch/course/view.php?id=14316}{Moodle}.
+
+\begin{itemize}
+	\item Your submission should be a gzipped tar archive, formatted like project\_number\_lastname\_firstname.zip or project\_number\_lastname\_firstname.tgz. 
+	It should contain
+	\begin{itemize}
+		\item all the source codes of your solutions;
+		\item your write-up with your name  project\_number\_lastname\_firstname.pdf.
+	\end{itemize}
+	\item Submit your .zip/.tgz through Moodle.
+\end{itemize}
+
+\end{document}
