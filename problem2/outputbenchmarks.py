@@ -29,6 +29,7 @@ for (j,n) in  enumerate(N):
             buf = f.read(12)
             # Data Layout: <int:num_threads>
             #              <double:elapsed_time>
+            # data = struct.unpack('=id', buf) FIRST ENTRY IS NUM THREAD SECOND IS DURATION
             results.append(struct.unpack('=id', buf))
        
 	print("p=",p,"n=",n)
